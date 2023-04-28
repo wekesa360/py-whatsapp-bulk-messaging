@@ -34,5 +34,5 @@ class ContactConverter:
             return None
         
         # Format the contact number in the international format
-        return phonenumbers.format_number(parsed_number, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
+        return f'+{str(parsed_number.country_code)}{str(parsed_number.national_number)}'
         
