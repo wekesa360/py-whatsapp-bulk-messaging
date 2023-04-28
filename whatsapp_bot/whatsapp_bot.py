@@ -8,6 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 import time
+import pickle
 import os
 import threading
 
@@ -16,27 +17,41 @@ class WhatsAppBot(threading.Thread):
         threading.Thread.__init__(self)
         self.phone_number = phon_number
         self.message = message
-        self.driver = self.get_driver()
+        self.driver = None
     
     def get_driver(self):
-        session_file_path = "session.data"
-        chrome_options = Options()
-        chrome_options.add_argument("user-data-dir=selenium")
+        # Check if a driver instance already exists
+        if self.driver:
+            return self.driver
 
-        if os.path.exists(session_file_path):
-            # If the session file exists, use it to authenticate
-            chrome_options.add_argument(f"session-id={session_file_path}")
-        
-        driver = webdriver.Chrome(options=chrome_options)
+        # Load the session from the file if it exists
+        session_file_path = "whatsapp_session.pkl"
+        try:
+            with open(session_file_path, "rb") as f:
+                session = pickle.load(f)
+            self.driver = webdriver.Chrome(executable_path=self.chrome_driver_path)
+            self.driver.session_id = session["session_id"]
+            self.driver.command_executor._url = session["executor_url"]
+            return self.driver
+        except FileNotFoundError:
+            pass
 
-        # Save the session file
-        if not os.path.exists(session_file_path):
-            # If the session file does not exist, authenticate and save the session
-            driver.get("https://web.whatsapp.com/")
-            WebDriverWait(driver, 60).until(EC.presence_of_element_located((By.XPATH, "//div[@title='Menu']")))
-            driver.save_session(session_file_path)
+        # If session file does not exist, create a new driver instance
+        options = webdriver.ChromeOptions()
+        options.add_argument("--user-data-dir=chrome-data")
+        options.add_argument("--profile-directory=Default")
+        self.driver = webdriver.Chrome(executable_path=self.chrome_driver_path, options=options)
+        self.driver.get("https://web.whatsapp.com/")
         
-        return driver
+        # Save the session to a file
+        session = {
+            "session_id": self.driver.session_id,
+            "executor_url": self.driver.command_executor._url,
+        }
+        with open(session_file_path, "wb") as f:
+            pickle.dump(session, f)
+
+        return self.driver
 
     def run(self):
         # Create a new instance of the web driver
@@ -56,7 +71,7 @@ class WhatsAppBot(threading.Thread):
             search_box.send_keys(self.phone_number)
             search_box.send_keys(Keys.RETURN)
         except TimeoutException:
-            print("Timed out waiting for search box element to appear")
+            return "Timed out waiting for search box element to appear"
 
         #wait for chat to load
         time.sleep(5)
@@ -75,7 +90,7 @@ class WhatsAppBot(threading.Thread):
         time.sleep(2)
 
         #close the web driver
-        driver.quite()
+        driver.quit()
 
 if __name__ == "__main__":
     # Create a new instance of the whatsapp bot
