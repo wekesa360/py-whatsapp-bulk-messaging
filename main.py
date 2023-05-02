@@ -52,7 +52,6 @@ class App:
         self.ready_button["command"] = self.start_whatsapp_bot
 
         self.message = tk.Text(root)
-        
         self.message["bg"] = "#ffffff"
         ft = tkFont.Font(family='Times',size=10)
         self.message["font"] = ft
@@ -60,13 +59,11 @@ class App:
         self.message.place(x=110,y=280,width=436,height=105)
 
         self.column_name = tk.Entry(root)
-        
         self.column_name["bg"] = "#ffffff"
         self.column_name["borderwidth"] = "1px"
         ft = tkFont.Font(family='Times',size=10)
         self.column_name["font"] = ft
         self.column_name["fg"] = "#333333"
-        self.column_name["justify"] = "center"
         self.column_name.place(x=110,y=170,width=431,height=41)
 
         self.contacts_output=tk.Listbox(root)
@@ -80,7 +77,7 @@ class App:
         ft = tkFont.Font(family='Times',size=11)
         self.label_column_name["font"] = ft
         self.label_column_name["fg"] = "#333333"
-        self.label_column_name["text"] = "Enter the name of the column containing contacts"
+        self.label_column_name["text"] = "Column name containing contacts"
         self.label_column_name.place(x=110,y=130,width=404,height=30)
 
         self.tittle_label=tk.Label(root)
@@ -125,7 +122,7 @@ class App:
         return self.file_path
 
     def start_whatsapp_bot(self):
-        message = self.message.get()
+        message = self.message.get(1.0, 'end')
         bot = WhatsAppBot(self.contacts, message)
         bot.start()
 

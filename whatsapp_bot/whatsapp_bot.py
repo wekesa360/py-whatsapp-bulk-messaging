@@ -51,7 +51,9 @@ class WhatsAppBot(threading.Thread):
             message_box = WebDriverWait(driver, 30).until(
                             EC.presence_of_element_located((By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[1]/p'))
                         )
+            time.sleep(1)
             message_box.send_keys(self.message)
+            time.sleep(1)
             message_box.send_keys(Keys.RETURN)
             return None
         except NoSuchElementException:
