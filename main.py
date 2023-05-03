@@ -98,13 +98,13 @@ class App:
         self.message_label["text"] = "Message"
         self.message_label.place(x=110,y=240,width=70,height=25)
 
-        self.output_labal=tk.Label(root)
+        self.output_label=tk.Label(root)
         ft = tkFont.Font(family='Times',size=11)
-        self.output_labal["font"] = ft
-        self.output_labal["fg"] = "#333333"
-        self.output_labal["justify"] = "center"
-        self.output_labal["text"] = "Output"
-        self.output_labal.place(x=100,y=520,width=70,height=25)
+        self.output_label["font"] = ft
+        self.output_label["fg"] = "#333333"
+        self.output_label["justify"] = "center"
+        self.output_label["text"] = "Output"
+        self.output_label.place(x=100,y=520,width=70,height=25)
 
     def clear(self):
         self.column_name.delete(0, 'end')
