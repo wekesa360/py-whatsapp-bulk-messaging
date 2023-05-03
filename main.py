@@ -118,13 +118,20 @@ class App:
                                                     filetypes=[("CSV files", "*.csv")])
         contacts_converter = ContactConverter(self.file_path, self.column_name.get())
         self.contacts = contacts_converter.convert()
-
+        if self.contacts == False:
+            messagebox.showerror(title='Error message', message = 'Invalid column name')
         return self.file_path
 
     def start_whatsapp_bot(self):
         message = self.message.get(1.0, 'end')
         bot = WhatsAppBot(self.contacts, message)
         bot.start()
+        if bot.start() == "No internet connection":
+            messagebox.showwarning(title='Erro Message', message='No internet connection')
+        elif "Element not found" in bot.start():
+            messagebox.showwarning(title='Error Message', message='Element not found')
+        else:
+            messagebox.showinfo(title='info', message='successfully sent to all contacts')
 
 
 

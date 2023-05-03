@@ -31,7 +31,7 @@ class WhatsAppBot(threading.Thread):
             self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=options)
             self.driver.get("https://web.whatsapp.com/")
         except WebDriverException as e:
-            if "no such session" in str(e):
+            if "Could not reach host" in str(e):
                 return "No internet connection"
         return self.driver
     
@@ -44,7 +44,7 @@ class WhatsAppBot(threading.Thread):
             search_box.send_keys(Keys.RETURN)
             return None
         except TimeoutException:
-            return "Timed out waiting for search box element to appear"
+            return "Element not found"
         
     def send_message(self, driver):
         try:
