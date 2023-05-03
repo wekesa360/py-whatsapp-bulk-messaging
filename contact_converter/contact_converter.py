@@ -17,15 +17,20 @@ class ContactConverter:
                     contact = self.validate(row[self.column_name])
                     if contact:
                         contacts.append(contact)
-        
+                else: 
+                    return False
+                
         return contacts
     
     def validate(self, contact):
+        country_code = '+254'
         # Convert the contact number to the international format
         if contact.startswith(('7', '1')):
-            contact = '+254' + contact
+            contact = country_code + contact
         elif contact.startswith('0'):
-            contact = '+254' + contact[1:]
+            contact = country_code + contact[1:]
+        else:
+            return 'Invalid contacts'
         # Remove all non-numeric characters from the contact number
         contact = re.sub(r'[^\d+]', '', contact)
         
