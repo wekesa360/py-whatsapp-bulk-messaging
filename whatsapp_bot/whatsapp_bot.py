@@ -24,8 +24,8 @@ class WhatsAppBot(threading.Thread):
             return self.driver
         
         options = webdriver.ChromeOptions()
-        options.add_argument("--user-data-dir=chrome-data")
-        options.add_argument("--profile-directory=Default")
+        # options.add_argument("--user-data-dir=chrome-data")
+        # options.add_argument("--profile-directory=Default")
         # Create a new instance of the web driver
         try:
             self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=options)
