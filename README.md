@@ -1,7 +1,7 @@
 # Whatsapp-Bulk-Message-Automation
 Bulk WhatsApp messaging automation tool, powered by Selenium and the Chrome driver for seamless integration with Web WhatsApp. With a simple and user-friendly UI built on Tkinter, this tool offers a convenient solution for bulk messaging.
 
-Effortlessly manage your contacts as our tool efficiently reads them from a CSV file, ensuring a streamlined messaging process. The tool allows you to send messages to your desired recipients.
+The tool efficiently reads them from a CSV file, ensuring a streamlined messaging process. The tool allows you to send messages to your desired recipients.
 
 
 # Installation 
