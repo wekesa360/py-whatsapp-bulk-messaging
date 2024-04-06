@@ -1,10 +1,10 @@
 import ttkbootstrap as ttk
 from ttkbootstrap import Window
+from ttkbootstrap.style import use
 from tkinter import filedialog
 from tkinter import messagebox
 import contact_converter
 import whatsapp_bot
-
 
 class App:
     def __init__(self):
@@ -43,8 +43,15 @@ class App:
             command=self.start_whatsapp_bot,
             bootstyle="success",
         )
-        self.contacts_output = ttk.Listbox(self.root, font=("Helvetica", 12))
         self.output_label = ttk.Label(self.root, text="Output", font=("Helvetica", 12))
+
+        # Create a custom style for the Treeview widget
+        use("Treeview", font=('Helvetica', 12))
+
+        # Create the Treeview widget and apply the custom style
+        self.contacts_output = ttk.Treeview(self.root, show="tree", selectmode="browse", style='Treeview')
+        self.contacts_output.configure(columns=(), height=8)
+        self.contacts_output.heading("#0", text="", anchor="w")
 
         # Layout the UI elements
         self.title_label.grid(
@@ -70,7 +77,7 @@ class App:
     def clear(self):
         self.column_name_entry.delete(0, "end")
         self.message_text.delete(1.0, "end")
-        self.contacts_output.delete(0, "end")
+        self.contacts_output.delete(*self.contacts_output.get_children())
 
     def open_file_dialog(self):
         self.file_path = filedialog.askopenfilename(
@@ -85,6 +92,13 @@ class App:
                 messagebox.showerror(
                     title="Error message", message="Invalid column name"
                 )
+            else:
+                self.populate_contacts_output()
+
+    def populate_contacts_output(self):
+        self.contacts_output.delete(*self.contacts_output.get_children())
+        for contact in self.contacts:
+            self.contacts_output.insert("", "end", text=contact)
 
     def start_whatsapp_bot(self):
         message = self.message_text.get(1.0, "end").strip()
@@ -108,7 +122,9 @@ class App:
                 title="Warning", message="Please upload a file and enter a message."
             )
 
-
-if __name__ == "__main__":
+def main():
     app = App()
     app.root.mainloop()
+
+if __name__ == "__main__":
+    main()
