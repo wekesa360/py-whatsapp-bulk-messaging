@@ -1,83 +1,60 @@
-import ttkbootstrap as ttk
-from ttkbootstrap import Window
-from ttkbootstrap.style import use
-from tkinter import filedialog
-from tkinter import messagebox
-import contact_converter
-import whatsapp_bot
+import tkinter as tk
+from tkinter import ttk
+from ttkbootstrap import Style
+import tkinter.filedialog as filedialog
+import tkinter.messagebox as messagebox
+import contact_converter.contact_converter as contact_converter
+import whatsapp_bot.whatsapp_bot as whatsapp_bot
 
-class App:
+class WhatsAppBotGUI(tk.Tk):
     def __init__(self):
-        self.root = Window(themename="superhero")
-        self.root.title("WhatsApp Bulk Messaging")
-        self.root.geometry("670x833")
-        self.root.resizable(False, False)
+        super().__init__()
+        self.title("WhatsApp Bot")
+        self.geometry("800x600")
+        self.style = Style(theme="flatly")
 
-        # Create UI elements
-        self.title_label = ttk.Label(
-            self.root,
-            text="WhatsApp Bulk Messaging",
-            bootstyle="primary",
-            font=("Helvetica", 24),
-        )
-        self.column_name_label = ttk.Label(
-            self.root, text="Column name containing contacts", font=("Helvetica", 12)
-        )
-        self.column_name_entry = ttk.Entry(self.root, font=("Helvetica", 12))
-        self.message_label = ttk.Label(
-            self.root, text="Message", font=("Helvetica", 12)
-        )
-        self.message_text = ttk.Text(self.root, height=5, font=("Helvetica", 12))
-        self.upload_button = ttk.Button(
-            self.root,
-            text="UPLOAD FILE",
-            command=self.open_file_dialog,
-            bootstyle="outline-primary",
-        )
-        self.clear_button = ttk.Button(
-            self.root, text="CLEAR", command=self.clear, bootstyle="outline-danger"
-        )
-        self.ready_button = ttk.Button(
-            self.root,
-            text="READY",
-            command=self.start_whatsapp_bot,
-            bootstyle="success",
-        )
-        self.output_label = ttk.Label(self.root, text="Output", font=("Helvetica", 12))
+        # Create widgets
+        self.file_label = tk.Label(self, text="Upload CSV File:")
+        self.file_label.pack(pady=10)
+        self.file_button = ttk.Button(self, text="Choose File", command=self.open_file_dialog)
+        self.file_button.pack()
 
-        # Create a custom style for the Treeview widget
-        use("Treeview", font=('Helvetica', 12))
+        
 
-        # Create the Treeview widget and apply the custom style
-        self.contacts_output = ttk.Treeview(self.root, show="tree", selectmode="browse", style='Treeview')
-        self.contacts_output.configure(columns=(), height=8)
-        self.contacts_output.heading("#0", text="", anchor="w")
+        self.contacts_frame = ttk.Frame(self)
+        self.contacts_frame.pack(pady=10)
+        self.contacts_label = tk.Label(self.contacts_frame, text="Contacts:")
+        self.contacts_label.pack(side=tk.TOP)
+        self.contacts_treeview = ttk.Treeview(self.contacts_frame, columns=("Name", "Number"))
+        self.contacts_treeview.pack()
+        self.contacts_treeview.heading("Name", text="Name")
+        self.contacts_treeview.heading("Number", text="Number")
 
-        # Layout the UI elements
-        self.title_label.grid(
-            row=0, column=0, columnspan=2, padx=20, pady=20, sticky="n"
-        )
-        self.column_name_label.grid(row=1, column=0, padx=20, pady=10, sticky="w")
-        self.column_name_entry.grid(row=2, column=0, padx=20, pady=10, sticky="ew")
-        self.message_label.grid(row=3, column=0, padx=20, pady=10, sticky="w")
-        self.message_text.grid(row=4, column=0, padx=20, pady=10, sticky="ew")
-        self.upload_button.grid(row=5, column=0, padx=20, pady=10, sticky="w")
-        self.clear_button.grid(row=5, column=1, padx=20, pady=10, sticky="w")
-        self.ready_button.grid(
-            row=6, column=0, columnspan=2, padx=20, pady=10, sticky="ew"
-        )
-        self.output_label.grid(row=7, column=0, padx=20, pady=10, sticky="w")
-        self.contacts_output.grid(
-            row=8, column=0, columnspan=2, padx=20, pady=10, sticky="ew"
-        )
+        self.column_name_label = tk.Label(self, text="Phone Number Column Name:")
+        self.column_name_label.pack(pady=10)
+        self.column_name_entry = tk.Entry(self)
+        self.column_name_entry.pack()
 
-        self.root.columnconfigure(0, weight=1)
-        self.root.columnconfigure(1, weight=1)
+        self.message_label = tk.Label(self, text="Enter Message:")
+        self.message_label.pack(pady=10)
+        self.message_text = tk.Text(self, height=5)
+        self.message_text.pack()
 
-    def clear(self):
-        self.column_name_entry.delete(0, "end")
-        self.message_text.delete(1.0, "end")
-        self.contacts_output.delete(*self.contacts_output.get_children())
+        self.send_button = ttk.Button(self, text="Send Message", command=self.start_whatsapp_bot)
+        self.send_button.pack(pady=10)
+
+        # Initialize variables
+        self.file_path = None
+        self.contacts = []
+
+    # def open_file_dialog(self):
+    #     self.file_path = filedialog.askopenfilename(
+    #         initialdir="/",
+    #         title="Select CSV File",
+    #         filetypes=[("CSV Files", "*.csv")]
+    #     )
+    #     if self.file_path:
+    #         self.process_csv_file()
 
     def open_file_dialog(self):
         self.file_path = filedialog.askopenfilename(
@@ -93,17 +70,17 @@ class App:
                     title="Error message", message="Invalid column name"
                 )
             else:
-                self.populate_contacts_output()
+                self.populate_contacts_treeview()
 
-    def populate_contacts_output(self):
-        self.contacts_output.delete(*self.contacts_output.get_children())
+    def populate_contacts_treeview(self):
+        self.contacts_treeview.delete(*self.contacts_treeview.get_children())
         for contact in self.contacts:
-            self.contacts_output.insert("", "end", text=contact)
+            self.contacts_treeview.insert("", "end", text=contact)
 
     def start_whatsapp_bot(self):
         message = self.message_text.get(1.0, "end").strip()
         if self.contacts and message:
-            bot = whatsapp_bot.WhatsAppBot(self.contacts, message)
+            bot = whatsapp_bot.WhatsAppBot(self.contacts, message, browser="edge")
             result = bot.start()
             if result == "No internet connection":
                 messagebox.showwarning(
@@ -122,9 +99,8 @@ class App:
                 title="Warning", message="Please upload a file and enter a message."
             )
 
-def main():
-    app = App()
-    app.root.mainloop()
 
+   
 if __name__ == "__main__":
-    main()
+    app = WhatsAppBotGUI()
+    app.mainloop()

@@ -3,16 +3,17 @@ import re
 
 
 class ContactConverter:
-    def __init__(self, filename, column_name):
-        self.filename = filename
+    def __init__(self, file_path,column_name="number"):
+        self.file_path = file_path
         self.column_name = column_name
 
     def convert(self):
         contacts = []
-        with open(self.filename, "r") as csv_file:
+        with open(self.file_path, "r") as csv_file:
             reader = csv.DictReader(csv_file)
 
             for row in reader:
+
                 if self.column_name in row:
 
                     contact = self.validate(row[self.column_name])
