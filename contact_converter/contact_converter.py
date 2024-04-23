@@ -3,7 +3,7 @@ import re
 
 
 class ContactConverter:
-    def __init__(self, file_path,column_name="number"):
+    def __init__(self, file_path, column_name="number"):
         self.file_path = file_path
         self.column_name = column_name
 
@@ -25,15 +25,16 @@ class ContactConverter:
         return contacts
 
     def validate(self, contact):
+        """
+        This function validates the contact number
+        """
         country_code = "+254"
-        # Convert the contact number to the international format
         if contact.startswith(("7", "1")):
             contact = country_code + contact
         elif contact.startswith("0"):
             contact = country_code + contact[1:]
         else:
             return "Invalid contacts"
-        # Remove all non-numeric characters from the contact number
         contact = re.sub(r"[^\d+]", "", contact)
 
         return contact

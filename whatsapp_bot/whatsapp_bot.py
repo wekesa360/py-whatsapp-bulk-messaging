@@ -13,6 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
+
 class WhatsAppBot(threading.Thread):
     def __init__(self, phone_numbers, message, browser="chrome"):
         super().__init__()
@@ -69,7 +70,7 @@ class WhatsAppBot(threading.Thread):
             message_box = WebDriverWait(self.driver, 30).until(
                 EC.presence_of_element_located(
                     (
-                         By.XPATH,
+                        By.XPATH,
                         '//div[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[1]/p',
                     )
                 )

@@ -6,6 +6,7 @@ import tkinter.messagebox as messagebox
 import contact_converter.contact_converter as contact_converter
 import whatsapp_bot.whatsapp_bot as whatsapp_bot
 
+
 class WhatsAppBotGUI(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -16,16 +17,18 @@ class WhatsAppBotGUI(tk.Tk):
         # Create widgets
         self.file_label = tk.Label(self, text="Upload CSV File:")
         self.file_label.pack(pady=10)
-        self.file_button = ttk.Button(self, text="Choose File", command=self.open_file_dialog)
+        self.file_button = ttk.Button(
+            self, text="Choose File", command=self.open_file_dialog
+        )
         self.file_button.pack()
-
-        
 
         self.contacts_frame = ttk.Frame(self)
         self.contacts_frame.pack(pady=10)
         self.contacts_label = tk.Label(self.contacts_frame, text="Contacts:")
         self.contacts_label.pack(side=tk.TOP)
-        self.contacts_treeview = ttk.Treeview(self.contacts_frame, columns=("Name", "Number"))
+        self.contacts_treeview = ttk.Treeview(
+            self.contacts_frame, columns=("Name", "Number")
+        )
         self.contacts_treeview.pack()
         self.contacts_treeview.heading("Name", text="Name")
         self.contacts_treeview.heading("Number", text="Number")
@@ -40,7 +43,9 @@ class WhatsAppBotGUI(tk.Tk):
         self.message_text = tk.Text(self, height=5)
         self.message_text.pack()
 
-        self.send_button = ttk.Button(self, text="Send Message", command=self.start_whatsapp_bot)
+        self.send_button = ttk.Button(
+            self, text="Send Message", command=self.start_whatsapp_bot
+        )
         self.send_button.pack(pady=10)
 
         # Initialize variables
@@ -100,7 +105,6 @@ class WhatsAppBotGUI(tk.Tk):
             )
 
 
-   
 if __name__ == "__main__":
     app = WhatsAppBotGUI()
     app.mainloop()
