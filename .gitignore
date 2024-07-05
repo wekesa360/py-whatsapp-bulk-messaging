@@ -1,7 +1,10 @@
 .venv/
+*/*/__pycache__
 */__pycache__
+__pycache__/
 /selenium
 /chrome-data
 */chrome-data
 sample.csv
 build/
+whatsapp_user_data/
