@@ -7,6 +7,7 @@ from constants import (
     DARK_ACCENT,
 )
 
+
 class BrowserPrompt(ctk.CTkToplevel):
     def __init__(self, master, theme, first_run=True):
         super().__init__(master)
