@@ -1,3 +1,4 @@
+import tempfile
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -12,6 +13,7 @@ from selenium.webdriver.edge.service import Service as EdgeService
 import urllib.parse
 import time
 import os
+import stat
 from constants import (
     MAX_RETRY_ATTEMPTS,
     CHAT_LOAD_TIMEOUT,
@@ -22,10 +24,29 @@ class WhatsAppBot:
     def __init__(self, browser_name, log_callback, headless=False):
         self.driver = None
         self.browser_name = browser_name
-        self.user_data_dir = os.path.join(os.getcwd(), "whatsapp_user_data")
+        self.user_data_dir = os.path.join(tempfile.gettempdir(), "whatsapp_user_data")
         self.log_callback = log_callback
         self.stop_flag = False
         self.headless = headless
+        self.ensure_user_data_dir()
+
+    def ensure_user_data_dir(self):
+        try:
+            if not os.path.exists(self.user_data_dir):
+                os.makedirs(self.user_data_dir)
+                if os.name == "nt":  # Windows
+                    import win32api
+                    import win32security
+                    user_sid = win32security.LookupAccountName(None, win32api.GetUserName())[0]
+                    security_descriptor = win32security.GetFileSecurity(self.user_data_dir, win32security.DACL_SECURITY_INFORMATION)
+                    dacl = win32security.ACL()
+                    dacl.AddAccessAllowedAce(win32security.ACL_REVISION, win32security.FILE_ALL_ACCESS, user_sid)
+                    security_descriptor.SetSecurityDescriptorDacl(1, dacl, 0)
+                    win32security.SetFileSecurity(self.user_data_dir, win32security.DACL_SECURITY_INFORMATION, security_descriptor)
+                else:  # Unix-based systems and Linux
+                    os.chmod(self.user_data_dir, stat.S_IRWXU)
+        except Exception as e:
+            raise Exception(f"Failed to create user data directory: {str(e)}")
 
     def initialize_driver(self):
         if not self.driver:

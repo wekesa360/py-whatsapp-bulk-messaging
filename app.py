@@ -131,7 +131,7 @@ class WhatsAppBotGUI(ctk.CTk):
 
         # Message Input
         message_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
-        message_frame.grid(row=2, column=0, columnspan=3, sticky="nsew", pady=(20, 0))
+        message_frame.grid(row=2, column=0, columnspan=3, sticky="nsew", pady=(20, 0), )
         message_frame.grid_columnconfigure(0, weight=1)
         message_frame.grid_rowconfigure(1, weight=1)
 

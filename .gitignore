@@ -8,3 +8,5 @@ __pycache__/
 sample.csv
 build/
 whatsapp_user_data/
+output/
+.vscode
